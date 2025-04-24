@@ -26,7 +26,7 @@ public class TallaController {
         return ResponseEntity.ok(talla);
     }
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<Iterable<Talla>> getAllTallas(){
         return ResponseEntity.ok(tallaService.getAllTallas());
     }

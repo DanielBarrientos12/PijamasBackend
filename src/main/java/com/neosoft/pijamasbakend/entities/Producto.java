@@ -20,7 +20,7 @@ public class Producto {
     private String nombre;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "subcategoria_id", nullable = false)
     private Subcategoria subcategoria;
 
@@ -30,7 +30,7 @@ public class Producto {
     private String genero;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "talla_id", nullable = false)
     private Talla talla;
 
@@ -43,9 +43,6 @@ public class Producto {
     @Column(name = "precio_venta", nullable = false, precision = 10, scale = 2)
     private BigDecimal precioVenta;
 
-    @NotNull
-    @ColumnDefault("true")
-    @Column(name = "activo", nullable = false)
     private Boolean activo;
 
     @Column(name = "fecha_creacion")
