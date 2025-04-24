@@ -1,6 +1,6 @@
 package com.neosoft.pijamasbakend.controllers;
 
-import com.neosoft.pijamasbakend.dto.TallaDto;
+import com.neosoft.pijamasbakend.models.TallaDto;
 import com.neosoft.pijamasbakend.entities.Talla;
 import com.neosoft.pijamasbakend.services.TallaService;
 import org.springframework.beans.factory.annotation.Autowired;

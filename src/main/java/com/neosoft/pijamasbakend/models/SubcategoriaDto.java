@@ -1,4 +1,4 @@
-package com.neosoft.pijamasbakend.dto;
+package com.neosoft.pijamasbakend.models;
 
 import lombok.Data;
 

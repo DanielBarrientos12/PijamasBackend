@@ -1,7 +1,6 @@
 package com.neosoft.pijamasbakend.controllers;
 
-import com.neosoft.pijamasbakend.dto.SubcategoriaDto;
-import com.neosoft.pijamasbakend.entities.Categoria;
+import com.neosoft.pijamasbakend.models.SubcategoriaDto;
 import com.neosoft.pijamasbakend.entities.Subcategoria;
 import com.neosoft.pijamasbakend.services.CategoriaService;
 import com.neosoft.pijamasbakend.services.SubcategoriaService;

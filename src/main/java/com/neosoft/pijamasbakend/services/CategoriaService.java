@@ -1,6 +1,6 @@
 package com.neosoft.pijamasbakend.services;
 
-import com.neosoft.pijamasbakend.dto.CategoriaDto;
+import com.neosoft.pijamasbakend.models.CategoriaDto;
 import com.neosoft.pijamasbakend.entities.Categoria;
 import com.neosoft.pijamasbakend.repositories.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
