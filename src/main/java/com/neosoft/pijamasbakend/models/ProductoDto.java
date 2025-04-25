@@ -16,6 +16,7 @@ public class ProductoDto {
     private Integer tallaId;
     private BigDecimal precioCompra;
     private BigDecimal precioVenta;
+    private Boolean activo;
     List<MultipartFile> imagenes;
 
 
