@@ -77,6 +77,7 @@ public class ProductoService {
         product.setTalla(talla);
         product.setPrecioCompra(dto.getPrecioCompra());
         product.setPrecioVenta(dto.getPrecioVenta());
+        product.setActivo(dto.getActivo());
 
         // si llegan nuevas imágenes, anexa al final:
         if (dto.getImagenes() != null && !dto.getImagenes().isEmpty()) {
@@ -99,4 +100,10 @@ public class ProductoService {
         fileService.deleteFile(img.getUrl());         // borra archivo físico
         imagenRepo.delete(img);                       // borra registro
     }
+
+    public List<Producto> getAllProductos(){
+        return productoRepo.findAll();
+    }
+
+
 }
