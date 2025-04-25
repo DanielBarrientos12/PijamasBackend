@@ -103,4 +103,9 @@ public class ProductoService {
     public List<Producto> getAllActiveProductos() {
         return productoRepo.findByActivoTrue();
     }
+
+    public Producto findById(Integer id) {
+        return productoRepo.findById(id).orElse(null);
+    }
+
 }
