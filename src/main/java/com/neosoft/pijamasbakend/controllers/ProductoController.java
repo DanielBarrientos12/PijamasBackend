@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -24,7 +25,7 @@ public class ProductoController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Producto> update(@PathVariable int id,@ModelAttribute ProductoDto dto) throws IOException {
+    public ResponseEntity<Producto> update(@PathVariable int id, @ModelAttribute ProductoDto dto) throws IOException {
         Producto actualizado = productoService.updateProducto(id, dto);
         return ResponseEntity.ok(actualizado);
     }
@@ -34,6 +35,14 @@ public class ProductoController {
         productoService.deleteProductoImagen(imagenId);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Producto>> getAllProductos() {
+        return ResponseEntity.ok(productoService.getAllProductos());
+    }
 
+    @GetMapping("/activos")
+    public ResponseEntity<List<Producto>> listarActivos() {
+        return ResponseEntity.ok(productoService.getAllActiveProductos());
+    }
 
 }

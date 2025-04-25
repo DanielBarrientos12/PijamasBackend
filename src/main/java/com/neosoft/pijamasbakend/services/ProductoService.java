@@ -105,5 +105,9 @@ public class ProductoService {
         return productoRepo.findAll();
     }
 
+    public List<Producto> getAllActiveProductos() {
+        return productoRepo.findByActivoTrue();
+    }
+
 
 }
