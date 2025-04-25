@@ -3,7 +3,6 @@ package com.neosoft.pijamasbakend.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -19,29 +18,14 @@ public class Producto {
 
     private String nombre;
 
-    @NotNull
     @ManyToOne
-    @JoinColumn(name = "subcategoria_id", nullable = false)
+    @JoinColumn(name = "subcategoria_id")
     private Subcategoria subcategoria;
 
     @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
 
     private String genero;
-
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "talla_id", nullable = false)
-    private Talla talla;
-
-    @Column(name = "stock_actual", nullable = false)
-    private Integer stockActual;
-
-    private BigDecimal precioCompra;
-
-    @NotNull
-    @Column(name = "precio_venta", nullable = false, precision = 10, scale = 2)
-    private BigDecimal precioVenta;
 
     private Boolean activo;
 

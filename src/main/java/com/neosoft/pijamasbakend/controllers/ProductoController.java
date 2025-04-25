@@ -19,30 +19,32 @@ public class ProductoController {
     private ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<Producto> create(@ModelAttribute ProductoDto dto) throws IOException {
+    public ResponseEntity<Producto> createProducto(@ModelAttribute ProductoDto dto) throws IOException {
         Producto creado = productoService.createProducto(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(creado);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Producto> update(@PathVariable int id, @ModelAttribute ProductoDto dto) throws IOException {
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> updateProducto(@PathVariable Integer id,@ModelAttribute ProductoDto dto) throws IOException {
         Producto actualizado = productoService.updateProducto(id, dto);
         return ResponseEntity.ok(actualizado);
     }
 
     @DeleteMapping("/imagenes/{imagenId}")
-    public void deleteImage(@PathVariable int imagenId) throws IOException {
+    public ResponseEntity<Void> deleteImagen(@PathVariable Integer imagenId) throws IOException {
         productoService.deleteProductoImagen(imagenId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
     public ResponseEntity<List<Producto>> getAllProductos() {
-        return ResponseEntity.ok(productoService.getAllProductos());
+        List<Producto> lista = productoService.getAllProductos();
+        return ResponseEntity.ok(lista);
     }
 
     @GetMapping("/activos")
-    public ResponseEntity<List<Producto>> listarActivos() {
-        return ResponseEntity.ok(productoService.getAllActiveProductos());
+    public ResponseEntity<List<Producto>> getActiveProductos() {
+        List<Producto> activos = productoService.getAllActiveProductos();
+        return ResponseEntity.ok(activos);
     }
-
 }

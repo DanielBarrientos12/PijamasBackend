@@ -13,9 +13,6 @@ public class ProductoDto {
     private Integer subcategoriaId;
     private String descripcion;
     private String genero;
-    private Integer tallaId;
-    private BigDecimal precioCompra;
-    private BigDecimal precioVenta;
     private Boolean activo;
     List<MultipartFile> imagenes;
 
