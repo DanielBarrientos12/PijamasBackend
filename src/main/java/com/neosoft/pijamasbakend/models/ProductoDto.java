@@ -1,8 +1,10 @@
 package com.neosoft.pijamasbakend.models;
 
 import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class ProductoDto {
@@ -14,8 +16,7 @@ public class ProductoDto {
     private Integer tallaId;
     private BigDecimal precioCompra;
     private BigDecimal precioVenta;
+    List<MultipartFile> imagenes;
 
-    // los campos fecha de cracion, activo y stock actual se modifican aotomaticamente o
-    // el servicio de ingresar inventario
 
 }
