@@ -30,12 +30,6 @@ public class ProductoController {
         return ResponseEntity.ok(actualizado);
     }
 
-    @DeleteMapping("/imagenes/{imagenId}")
-    public ResponseEntity<Void> deleteImagen(@PathVariable Integer imagenId) throws IOException {
-        productoService.deleteProductoImagen(imagenId);
-        return ResponseEntity.noContent().build();
-    }
-
     @GetMapping
     public ResponseEntity<List<Producto>> getAllProductos() {
         List<Producto> lista = productoService.getAllProductos();

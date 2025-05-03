@@ -1,5 +1,6 @@
 package com.neosoft.pijamasbakend.services;
 
+import com.neosoft.pijamasbakend.entities.Administrativo;
 import com.neosoft.pijamasbakend.entities.AgregarInventario;
 import com.neosoft.pijamasbakend.entities.ProductoTalla;
 import com.neosoft.pijamasbakend.models.AgregarInventarioDto;
@@ -21,6 +22,7 @@ public class AgregarInventarioService {
     @Autowired
     private AgregarInventarioRepository inventarioRepo;
 
+    /**
     public AgregarInventario createInventario(AgregarInventarioDto dto) {
         // 1. Recuperar variante (producto + talla)
         ProductoTalla variante = productoTallaRepo.findByProductoIdAndTallaId(
@@ -35,11 +37,10 @@ public class AgregarInventarioService {
         // 3. Registrar histórico en agregar_inventario
         AgregarInventario registro = new AgregarInventario();
         registro.setProducto(variante.getProducto());
-        registro.setTalla(variante.getTalla());
         registro.setCantidadAgregada(dto.getCantidadAgregada());
         registro.setFecha(LocalDateTime.now());
         registro.setObservaciones(dto.getObservaciones());
-        registro.setAdministrativoId(dto.getAdministrativoId());
+        //registro.setAdministrativoId(dto.getAdministrativoId()); corregir para poder guardar un administrativo
         inventarioRepo.save(registro);
 
         return registro;
@@ -81,4 +82,6 @@ public class AgregarInventarioService {
 
         inventarioRepo.delete(registro);
     }
+
+     **/
 }

@@ -14,8 +14,8 @@ public class ProductoImagen {
     private Integer id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "producto_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     @Lob

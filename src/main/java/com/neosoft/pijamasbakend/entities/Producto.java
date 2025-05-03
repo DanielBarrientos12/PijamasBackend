@@ -26,9 +26,6 @@ public class Producto {
 
     private Boolean activo;
 
-    @Column(name = "ruta_imagen")
-    private String rutaImagen;
-
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
 
