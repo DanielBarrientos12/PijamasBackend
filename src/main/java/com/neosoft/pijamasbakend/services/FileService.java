@@ -1,96 +1,81 @@
 package com.neosoft.pijamasbakend.services;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileNotFoundException;
+import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FileService {
 
-    @Value("${pijamas.upload-dir:/home/images}")
+    @Value("${pijamas.upload-dir}")
     private String uploadDir;
 
-    private Path root() { return Paths.get(uploadDir).toAbsolutePath().normalize(); }
-    private void ensureDir(Path dir) throws IOException { Files.createDirectories(dir); }
+    private Path rootLocation;
 
-    private String extension(String filename) {
-        int i = filename.lastIndexOf('.');
-        return (i >= 0) ? filename.substring(i).toLowerCase(Locale.ROOT) : "";
-    }
-
-    private void validateInsideRoot(Path path) {
-        if (!path.normalize().startsWith(root()))
-            throw new SecurityException("Intento de path-traversal detectado: " + path);
+    @PostConstruct
+    public void init() throws IOException {
+        rootLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Files.createDirectories(rootLocation); // asegurarse de que exista
     }
 
     public String storeFile(MultipartFile file, String subfolder) throws IOException {
-        String ext       = extension(Objects.requireNonNull(file.getOriginalFilename()));
-        String safeName  = UUID.randomUUID() + ext;
-        Path   targetDir = root().resolve(subfolder).normalize();
-        ensureDir(targetDir);
+        String originalFilename = Path.of(file.getOriginalFilename()).getFileName().toString();
+        Path targetFolder = rootLocation.resolve(subfolder);
+        Files.createDirectories(targetFolder);
 
-        Path dest = targetDir.resolve(safeName);
-        try (InputStream in = file.getInputStream()) {
-            Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
+        Path destinationFile = targetFolder.resolve(originalFilename).normalize().toAbsolutePath();
+
+        try (InputStream inputStream = file.getInputStream()) {
+            Files.copy(inputStream, destinationFile, StandardCopyOption.REPLACE_EXISTING);
         }
-        return subfolder + "/" + safeName;
+
+        return Paths.get(subfolder).resolve(originalFilename).toString().replace("\\", "/");
     }
 
     public List<String> storeFiles(List<MultipartFile> files, String subfolder) throws IOException {
-        List<String> paths = new ArrayList<>(files.size());
-        for (MultipartFile f : files) {
-            paths.add(storeFile(f, subfolder));
+        List<String> paths = new ArrayList<>();
+        for (MultipartFile file : files) {
+            paths.add(storeFile(file, subfolder));
         }
         return paths;
     }
 
-    public Resource load(String relativePath) throws IOException {
-        Path file = root().resolve(relativePath).normalize();
-        validateInsideRoot(file);
-        Resource res = new UrlResource(file.toUri());
-        if (!res.exists() || !res.isReadable()) {
-            throw new FileNotFoundException("Archivo no encontrado: " + relativePath);
-        }
-        return res;
+    public byte[] loadFile(String filename) throws IOException {
+        Path file = rootLocation.resolve(filename);
+        return Files.readAllBytes(file);
     }
 
-    public List<Resource> loadFiles(List<String> relativePaths) throws IOException {
-        List<Resource> resources = new ArrayList<>(relativePaths.size());
-        for (String path : relativePaths) {
-            resources.add(load(path));
+    public List<byte[]> loadFiles(List<String> filenames) throws IOException {
+        List<byte[]> contents = new ArrayList<>();
+        for (String filename : filenames) {
+            contents.add(loadFile(filename));
         }
-        return resources;
+        return contents;
     }
 
-    public void deleteFile(String relativePath) throws IOException {
-        Path file = root().resolve(relativePath).normalize();
-        validateInsideRoot(file);
-
+    public void deleteFile(String filename) throws IOException {
+        Path file = rootLocation.resolve(filename);
         Files.deleteIfExists(file);
-        cleanupEmptyDirs(file.getParent());
-    }
 
-    public void deleteFiles(List<String> relativePaths) throws IOException {
-        for (String path : relativePaths) {
-            deleteFile(path);
+        Path parent = file.getParent();
+        if (parent != null && Files.exists(parent) && Files.isDirectory(parent)) {
+            boolean isEmpty = Files.list(parent).findAny().isEmpty();
+            if (isEmpty) {
+                Files.delete(parent);
+            }
         }
     }
 
-    private void cleanupEmptyDirs(Path dir) throws IOException {
-        if (dir == null || dir.equals(root())) return;
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(dir)) {
-            if (!stream.iterator().hasNext()) {          // si está vacío se borra
-                Files.delete(dir);
-                cleanupEmptyDirs(dir.getParent());
-            }
+    public void deleteFiles(List<String> filenames) throws IOException {
+        for (String filename : filenames) {
+            deleteFile(filename);
         }
     }
 }

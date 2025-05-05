@@ -1,7 +1,7 @@
 package com.neosoft.pijamasbakend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -13,12 +13,12 @@ public class ProductoImagen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "producto_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
+    @JsonIgnore
     private Producto producto;
 
-    @Lob
+
     @Column(name = "url", nullable = false, columnDefinition = "text")
     private String url;
 

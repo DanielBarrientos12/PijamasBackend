@@ -2,6 +2,7 @@ package com.neosoft.pijamasbakend.controllers;
 
 import com.neosoft.pijamasbakend.entities.Producto;
 import com.neosoft.pijamasbakend.models.ProductoDto;
+import com.neosoft.pijamasbakend.models.ProductoResponseDto;
 import com.neosoft.pijamasbakend.services.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,12 @@ public class ProductoController {
     public ResponseEntity<Producto> updateProducto(@PathVariable Integer id,@ModelAttribute ProductoDto dto) throws IOException {
         Producto actualizado = productoService.updateProducto(id, dto);
         return ResponseEntity.ok(actualizado);
+    }
+
+    @GetMapping("/con-imagenes")
+    public ResponseEntity<List<ProductoResponseDto>> listarConImagenes() {
+        List<ProductoResponseDto> respuesta = productoService.getProductosConImagenesData();
+        return ResponseEntity.ok(respuesta);
     }
 
     @GetMapping

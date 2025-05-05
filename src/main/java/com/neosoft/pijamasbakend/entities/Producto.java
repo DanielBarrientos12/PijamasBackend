@@ -3,6 +3,7 @@ package com.neosoft.pijamasbakend.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -28,5 +29,8 @@ public class Producto {
 
     @Column(name = "fecha_creacion")
     private LocalDate fechaCreacion;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ProductoImagen> imagenes;
 
 }
