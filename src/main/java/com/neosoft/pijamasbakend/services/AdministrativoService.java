@@ -24,12 +24,12 @@ public class AdministrativoService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public List<Administrativo> getAllAdministrativos(){
+    public List<Administrativo> getAllAdministrativos() {
         return adminRepo.findAll();
     }
 
     @Transactional
-    public Administrativo saveAdministrativo(Administrativo administrativo){
+    public Administrativo saveAdministrativo(Administrativo administrativo) {
         String passwordEncoded = passwordEncoder.encode(administrativo.getHashedPassword());
         administrativo.setHashedPassword(passwordEncoded);
         administrativo.setLastUpdate(LocalDateTime.now());

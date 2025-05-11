@@ -18,7 +18,7 @@ public class SubcategoriaService {
     @Autowired
     private CategoriaService categoriaService;
 
-    public Subcategoria createSubcategoria(int id, SubcategoriaDto subcategoriaDto){
+    public Subcategoria createSubcategoria(int id, SubcategoriaDto subcategoriaDto) {
         Subcategoria subcategoria = new Subcategoria();
         Categoria categoria = categoriaService.findById(id);
 
@@ -28,23 +28,23 @@ public class SubcategoriaService {
         return subcategoriaRepository.save(subcategoria);
     }
 
-    public Subcategoria findById(int id){
+    public Subcategoria findById(int id) {
         return subcategoriaRepository.findById(id).orElse(null);
     }
 
-    public List<Subcategoria> getAllSubcategorias(){
+    public List<Subcategoria> getAllSubcategorias() {
         return subcategoriaRepository.findAll();
     }
 
-    public Subcategoria updateSubcategoria(int id, SubcategoriaDto subcategoriaDto){
+    public Subcategoria updateSubcategoria(int id, SubcategoriaDto subcategoriaDto) {
         Subcategoria subcategoria = findById(id);
         subcategoria.setNombre(subcategoriaDto.getNombre());
         subcategoria.setDescripcion(subcategoriaDto.getDescripcion());
         return subcategoriaRepository.save(subcategoria);
     }
 
-    public void deleteSubcategoria(int id){
-        if(!subcategoriaRepository.existsById(id)){
+    public void deleteSubcategoria(int id) {
+        if (!subcategoriaRepository.existsById(id)) {
             throw new RuntimeException("No existe subcategoria con id: " + id + " para eliminarla.");
         }
         if (subcategoriaRepository.existsById(id)) {

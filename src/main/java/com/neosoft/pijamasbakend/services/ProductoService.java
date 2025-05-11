@@ -75,37 +75,37 @@ public class ProductoService {
 
     public List<ProductoResponseDto> getProductosConImagenesData() {
         return productoRepo.findAllConImagenes().stream().map(prod -> {
-                    ProductoResponseDto dto = new ProductoResponseDto();
+            ProductoResponseDto dto = new ProductoResponseDto();
 
-                    dto.setId(prod.getId());
-                    dto.setNombre(prod.getNombre());
-                    dto.setDescripcion(prod.getDescripcion());
-                    dto.setGenero(prod.getGenero());
-                    dto.setActivo(prod.getActivo());
-                    dto.setFechaCreacion(prod.getFechaCreacion());
-                    dto.setSubcategoriaId(prod.getSubcategoria().getId());
+            dto.setId(prod.getId());
+            dto.setNombre(prod.getNombre());
+            dto.setDescripcion(prod.getDescripcion());
+            dto.setGenero(prod.getGenero());
+            dto.setActivo(prod.getActivo());
+            dto.setFechaCreacion(prod.getFechaCreacion());
+            dto.setSubcategoriaId(prod.getSubcategoria().getId());
 
-                    List<ImagenData> imgs = prod.getImagenes()
-                            .stream()
-                            .map(img -> {
-                                byte[] data;
-                                try {
-                                    data = fileService.loadFile(img.getUrl());
-                                } catch (IOException e) {
-                                    throw new UncheckedIOException("Error leyendo imagen " + img.getUrl(), e);
-                                }
-                                String nombreArchivo = Paths
-                                        .get(img.getUrl())
-                                        .getFileName()
-                                        .toString();
-                                return new ImagenData(img.getPosicion(), nombreArchivo, data);
-                            })
-                            .collect(Collectors.toList());
+            List<ImagenData> imgs = prod.getImagenes()
+                    .stream()
+                    .map(img -> {
+                        byte[] data;
+                        try {
+                            data = fileService.loadFile(img.getUrl());
+                        } catch (IOException e) {
+                            throw new UncheckedIOException("Error leyendo imagen " + img.getUrl(), e);
+                        }
+                        String nombreArchivo = Paths
+                                .get(img.getUrl())
+                                .getFileName()
+                                .toString();
+                        return new ImagenData(img.getPosicion(), nombreArchivo, data);
+                    })
+                    .collect(Collectors.toList());
 
-                    dto.setImagenes(imgs);
+            dto.setImagenes(imgs);
 
-                    return dto;
-                }).collect(Collectors.toList());
+            return dto;
+        }).collect(Collectors.toList());
     }
 
 

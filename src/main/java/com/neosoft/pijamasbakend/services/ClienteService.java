@@ -17,17 +17,17 @@ public class ClienteService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public Cliente createCliente(Cliente cliente){
+    public Cliente createCliente(Cliente cliente) {
         String passwordEncoded = passwordEncoder.encode(cliente.getHashedPassword());
         cliente.setHashedPassword(passwordEncoded);
         return clienteRepository.save(cliente);
     }
 
-    public Cliente findById(int id){
+    public Cliente findById(int id) {
         return clienteRepository.findById(id).orElse(null);
     }
 
-    public List<Cliente> getAllClientes(){
+    public List<Cliente> getAllClientes() {
         return clienteRepository.findAll();
     }
 

@@ -14,22 +14,22 @@ public class TallaService {
     @Autowired
     private TallaRepository tallaRepository;
 
-    public Talla createTalla(TallaDto tallaDto){
+    public Talla createTalla(TallaDto tallaDto) {
         Talla talla = new Talla();
         talla.setNombre(tallaDto.getNombre());
 
         return tallaRepository.save(talla);
     }
 
-    public Talla findById(int id){
+    public Talla findById(int id) {
         return tallaRepository.findById(id).orElse(null);
     }
 
-    public List<Talla> getAllTallas(){
+    public List<Talla> getAllTallas() {
         return tallaRepository.findAll();
     }
 
-    public Talla updateTalla(int id, TallaDto tallaDto){
+    public Talla updateTalla(int id, TallaDto tallaDto) {
         Talla talla = findById(id);
         talla.setNombre(tallaDto.getNombre());
         return tallaRepository.save(talla);

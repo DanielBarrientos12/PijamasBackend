@@ -15,24 +15,24 @@ public class TallaController {
     private TallaService tallaService;
 
     @PostMapping
-    public ResponseEntity<Talla> createTalla(@RequestBody TallaDto tallaDto){
+    public ResponseEntity<Talla> createTalla(@RequestBody TallaDto tallaDto) {
         Talla talla = tallaService.createTalla(tallaDto);
         return ResponseEntity.ok(talla);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Talla> findById(@PathVariable int id){
+    public ResponseEntity<Talla> findById(@PathVariable int id) {
         Talla talla = tallaService.findById(id);
         return ResponseEntity.ok(talla);
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<Talla>> getAllTallas(){
+    public ResponseEntity<Iterable<Talla>> getAllTallas() {
         return ResponseEntity.ok(tallaService.getAllTallas());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Talla> updateTalla(@PathVariable int id, @RequestBody TallaDto tallaDto){
+    public ResponseEntity<Talla> updateTalla(@PathVariable int id, @RequestBody TallaDto tallaDto) {
         Talla talla = tallaService.updateTalla(id, tallaDto);
         return ResponseEntity.ok(talla);
     }

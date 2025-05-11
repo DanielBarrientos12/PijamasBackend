@@ -45,6 +45,9 @@ public class Cliente {
     private String ciudad;
     private String barrio;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private String rol;
+
     @Column(name = "codigo_postal")
     private String codigoPostal;
 

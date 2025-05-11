@@ -15,18 +15,18 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping("/register")
-    public ResponseEntity<Cliente> registerCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<Cliente> registerCliente(@RequestBody Cliente cliente) {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteService.createCliente(cliente));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> findById(@PathVariable int id){
+    public ResponseEntity<Cliente> findById(@PathVariable int id) {
         return clienteService.findById(id) != null ? ResponseEntity
                 .ok(clienteService.findById(id)) : ResponseEntity.notFound().build();
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<Cliente>> getAllClientes(){
+    public ResponseEntity<Iterable<Cliente>> getAllClientes() {
         return ResponseEntity.ok(clienteService.getAllClientes());
     }
 

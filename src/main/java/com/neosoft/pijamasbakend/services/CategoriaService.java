@@ -14,28 +14,28 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categRepo;
 
-    public Categoria createCategoria(CategoriaDto categoriaDto){
+    public Categoria createCategoria(CategoriaDto categoriaDto) {
         Categoria categoria = new Categoria();
         categoria.setNombre(categoriaDto.getNombre());
         return categRepo.save(categoria);
     }
 
-    public Categoria findById(int id){
+    public Categoria findById(int id) {
         return categRepo.findById(id).orElse(null);
     }
 
-    public List<Categoria> getAllCategorias(){
+    public List<Categoria> getAllCategorias() {
         return categRepo.findAll();
     }
 
-    public Categoria updateCategoria(int id, CategoriaDto categoriaDto){
+    public Categoria updateCategoria(int id, CategoriaDto categoriaDto) {
         Categoria categoria = findById(id);
         categoria.setNombre(categoriaDto.getNombre());
         return categRepo.save(categoria);
     }
 
-    public void deleteCategoria(int id){
-        if(!categRepo.existsById(id)){
+    public void deleteCategoria(int id) {
+        if (!categRepo.existsById(id)) {
             throw new RuntimeException("No existe categoria con id: " + id + " para eliminarla.");
         }
         if (categRepo.existsById(id)) {

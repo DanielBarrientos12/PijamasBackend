@@ -17,12 +17,12 @@ public class AdministrativoController {
     private AdministrativoService administrativoService;
 
     @GetMapping
-    public List<Administrativo> getAllAdministrativos(){
+    public List<Administrativo> getAllAdministrativos() {
         return administrativoService.getAllAdministrativos();
     }
 
     @PostMapping
-    public ResponseEntity<Administrativo> createAdministrativo(@RequestBody Administrativo administrativo){
+    public ResponseEntity<Administrativo> createAdministrativo(@RequestBody Administrativo administrativo) {
         return ResponseEntity.status(HttpStatus.CREATED).body(administrativoService.saveAdministrativo(administrativo));
     }
 

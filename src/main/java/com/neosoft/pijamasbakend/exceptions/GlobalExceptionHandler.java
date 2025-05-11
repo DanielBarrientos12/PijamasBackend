@@ -19,7 +19,6 @@ public class GlobalExceptionHandler {
         String rootMsg = ex.getMostSpecificCause().getMessage().toLowerCase();
         String userMsg = "Error de integridad de datos";
 
-        // Ajusta según los nombres de constraint en tu BD
         if (rootMsg.contains("uq_cliente_email")) {
             userMsg = "El correo ya está registrado, pruebe con otro";
         } else if (rootMsg.contains("uq_cliente_numero_documento")) {

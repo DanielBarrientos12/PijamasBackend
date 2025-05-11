@@ -21,7 +21,7 @@ public class SubcategoriasController {
     private CategoriaService categoriaService;
 
     @GetMapping
-    public ResponseEntity<List<Subcategoria>> getAllSubcategorias(){
+    public ResponseEntity<List<Subcategoria>> getAllSubcategorias() {
         return ResponseEntity.ok(subcategoriaService.getAllSubcategorias());
     }
 
@@ -31,17 +31,17 @@ public class SubcategoriasController {
     }
 
     @PostMapping("{id}")
-    public ResponseEntity<Subcategoria> createSubcategoria(@PathVariable int id, @RequestBody SubcategoriaDto subcategoriaDto){
+    public ResponseEntity<Subcategoria> createSubcategoria(@PathVariable int id, @RequestBody SubcategoriaDto subcategoriaDto) {
         return ResponseEntity.ok(subcategoriaService.createSubcategoria(id, subcategoriaDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Subcategoria> updateSubcategoria(@PathVariable int id, @RequestBody SubcategoriaDto subcategoriaDto){
+    public ResponseEntity<Subcategoria> updateSubcategoria(@PathVariable int id, @RequestBody SubcategoriaDto subcategoriaDto) {
         return ResponseEntity.ok(subcategoriaService.updateSubcategoria(id, subcategoriaDto));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteSubcategoria(@PathVariable int id){
+    public void deleteSubcategoria(@PathVariable int id) {
         subcategoriaService.deleteSubcategoria(id);
     }
 

@@ -16,22 +16,22 @@ public class CategoriaController {
     private CategoriaService categoriaService;
 
     @GetMapping
-    public List<Categoria> getAllCategorias(){
+    public List<Categoria> getAllCategorias() {
         return categoriaService.getAllCategorias();
     }
 
     @GetMapping("/{id}")
-    public Categoria findById(@PathVariable int id){
+    public Categoria findById(@PathVariable int id) {
         return categoriaService.findById(id);
     }
 
     @PostMapping
-    public Categoria createCategoria(@RequestBody CategoriaDto categoriaDto){
+    public Categoria createCategoria(@RequestBody CategoriaDto categoriaDto) {
         return categoriaService.createCategoria(categoriaDto);
     }
 
     @PutMapping("/{id}")
-    public Categoria updateCategoria(@PathVariable int id, @RequestBody CategoriaDto categoriaDto){
+    public Categoria updateCategoria(@PathVariable int id, @RequestBody CategoriaDto categoriaDto) {
         return categoriaService.updateCategoria(id, categoriaDto);
     }
 
