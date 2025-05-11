@@ -108,11 +108,6 @@ public class ProductoService {
         }).collect(Collectors.toList());
     }
 
-
-    public List<Producto> getAllProductos() {
-        return productoRepo.findAll();
-    }
-
     public List<Producto> getAllActiveProductos() {
         return productoRepo.findByActivoTrue();
     }

@@ -37,12 +37,6 @@ public class ProductoController {
         return ResponseEntity.ok(respuesta);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Producto>> getAllProductos() {
-        List<Producto> lista = productoService.getAllProductos();
-        return ResponseEntity.ok(lista);
-    }
-
     @GetMapping("/activos")
     public ResponseEntity<List<Producto>> getActiveProductos() {
         List<Producto> activos = productoService.getAllActiveProductos();

@@ -97,8 +97,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         Map<String, Object> body = Map.of(
                 "error", failed.getMessage(),
-                "message", "Error en la autenticacion. Correo o contraseña incorrectos",
-                "path", request.getServletPath()
+                "message", "Error en la autenticacion. Correo o contraseña incorrectos"
         );
 
         // 3) Escribe el JSON de respuesta
