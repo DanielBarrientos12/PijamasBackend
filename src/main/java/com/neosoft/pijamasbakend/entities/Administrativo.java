@@ -1,5 +1,6 @@
 package com.neosoft.pijamasbakend.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -23,13 +24,14 @@ public class Administrativo {
 
     private String telefono;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "hashed_password", nullable = false)
     private String hashedPassword;
 
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "rol_id", nullable = false)
     private Rol rol;
 }

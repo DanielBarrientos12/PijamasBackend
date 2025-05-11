@@ -2,6 +2,7 @@ package com.neosoft.pijamasbakend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -20,8 +21,9 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/productos/con-imagenes", "/api/productos/", "api/roles", "api/administrativos")
-                .permitAll().anyRequest().authenticated())
+                .requestMatchers(HttpMethod.POST,"api/clientes/register").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes").permitAll()
+                .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(managment -> managment.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .build();

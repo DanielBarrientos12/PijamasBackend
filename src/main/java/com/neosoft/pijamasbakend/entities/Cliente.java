@@ -1,6 +1,7 @@
 package com.neosoft.pijamasbakend.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.Data;
@@ -21,6 +22,10 @@ public class Cliente {
 
     @Email
     private String email;
+
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "hashed_password", nullable = false)
+    private String hashedPassword;
 
     private String telefono;
 
