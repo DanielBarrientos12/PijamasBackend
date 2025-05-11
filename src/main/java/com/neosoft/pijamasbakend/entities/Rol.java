@@ -18,9 +18,4 @@ public class Rol {
     @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "nivel_acceso_id", nullable = false)
-    private NivelAcceso nivelAcceso;
-
 }
