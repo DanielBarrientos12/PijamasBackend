@@ -26,8 +26,10 @@ public class AgregarInventarioService {
     @Transactional
     public void createInventario(AgregarInventarioDto dto) {
         // 1. Crear variante si no existe
-        ProductoTalla variante = productoTallaService.getByProductoIdAndTallaId(dto.getProductoId(), dto.getTallaId());
-        if (variante == null) {
+        ProductoTalla variante;
+        if (productoTallaService.existsByProductoIdAndTallaId(dto.getProductoId(), dto.getTallaId())) {
+            variante = productoTallaService.getByProductoIdAndTallaId(dto.getProductoId(), dto.getTallaId());
+        } else {
             ProductoTallaDto ptDto = new ProductoTallaDto();
             ptDto.setProductoId(dto.getProductoId());
             ptDto.setTallaId(dto.getTallaId());

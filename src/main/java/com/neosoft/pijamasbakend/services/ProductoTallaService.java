@@ -46,6 +46,10 @@ public class ProductoTallaService {
                         "Variante no encontrada para productoId: " + productoId + " y tallaId: " + tallaId));
     }
 
+    public boolean existsByProductoIdAndTallaId(Integer productoId, Integer tallaId) {
+        return productoTallaRepo.existsByProductoIdAndTallaId(productoId, tallaId);
+    }
+
     public void guardarVariante(ProductoTalla variante) {
         productoTallaRepo.save(variante);
     }
