@@ -13,5 +13,6 @@ public class ProductoTallaDto {
     private Integer tallaId;
     private BigDecimal precioCompra;
     private BigDecimal precioVenta;
+    private Integer agregarStock;
 
 }

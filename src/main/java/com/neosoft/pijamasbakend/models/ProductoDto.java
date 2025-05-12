@@ -16,5 +16,10 @@ public class ProductoDto {
     private Boolean activo;
     List<MultipartFile> imagenes;
 
+    private Integer tallaId;
+    private BigDecimal precioCompra;
+    private BigDecimal precioVenta;
+    private Integer agregarStock;
+    private String observaciones;
 
 }

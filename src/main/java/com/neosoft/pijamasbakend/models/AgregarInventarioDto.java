@@ -11,6 +11,9 @@ public class AgregarInventarioDto {
     private Integer tallaId;
     private Integer cantidadAgregada;
     private String observaciones;
-    private Integer administrativoId;
+    private String email;
+    private BigDecimal precioCompra;
+    private BigDecimal precioVenta;
+    private Integer agregarStock;
 
 }

@@ -2,17 +2,21 @@ package com.neosoft.pijamasbakend.services;
 
 import com.neosoft.pijamasbakend.entities.Producto;
 import com.neosoft.pijamasbakend.entities.Subcategoria;
+import com.neosoft.pijamasbakend.models.AgregarInventarioDto;
 import com.neosoft.pijamasbakend.models.ProductoDto;
 import com.neosoft.pijamasbakend.models.ProductoResponseDto;
 import com.neosoft.pijamasbakend.repositories.ProductoRepository;
 import com.neosoft.pijamasbakend.utils.ImagenData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,27 +33,57 @@ public class ProductoService {
     private ProductoImagenService productoImagenService;
 
     @Autowired
+    private AgregarInventarioService agregarInventarioService;
+
+    @Autowired
     private FileService fileService;
 
+    @Transactional
     public Producto createProducto(ProductoDto dto) throws IOException {
+        // 1. Crear Producto
         Subcategoria subcat = subcategoriaService.findById(dto.getSubcategoriaId());
-        if (subcat == null) {
-            throw new RuntimeException("Subcategoría con id " + dto.getSubcategoriaId() + " no encontrada.");
-        }
-
+        if (subcat == null) throw new RuntimeException("Subcategoría no encontrada.");
+        
         Producto producto = new Producto();
         producto.setNombre(dto.getNombre());
         producto.setSubcategoria(subcat);
         producto.setDescripcion(dto.getDescripcion());
         producto.setGenero(dto.getGenero());
-        producto.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
-        producto.setFechaCreacion(LocalDate.now());
+        producto.setActivo(dto.getActivo() != null ? dto.getActivo() : Boolean.TRUE);
+        producto = productoRepo.save(producto);
 
-        productoRepo.save(producto);
-
+        // 2. Guardar imágenes
         productoImagenService.guardarImagenesParaProducto(producto, dto.getImagenes());
 
+        // 3. Obtener el email del Administrativo actual
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (auth.getPrincipal() instanceof UserDetails ud)
+                ? ud.getUsername()
+                : auth.getPrincipal().toString();
+
+        // 4. Llamar a inventario (que internamente creará variante + stock)
+        if (dto.getTallaId() != null && dto.getPrecioCompra() != null && dto.getPrecioVenta() != null) {
+            AgregarInventarioDto invDto = getAgregarInventarioDto(dto, producto, email);
+            agregarInventarioService.createInventario(invDto);
+        }
+
         return producto;
+    }
+
+    private static AgregarInventarioDto getAgregarInventarioDto(ProductoDto dto, Producto producto, String email) {
+        AgregarInventarioDto invDto = new AgregarInventarioDto();
+        invDto.setProductoId(producto.getId());
+        invDto.setTallaId(dto.getTallaId());
+        invDto.setPrecioCompra(dto.getPrecioCompra());
+        invDto.setPrecioVenta(dto.getPrecioVenta());
+        invDto.setCantidadAgregada(dto.getAgregarStock() != null ? dto.getAgregarStock() : 0);
+        invDto.setObservaciones(
+                dto.getObservaciones() != null
+                        ? dto.getObservaciones()
+                        : "Stock inicial al crear producto"
+        );
+        invDto.setEmail(email);
+        return invDto;
     }
 
     public Producto updateProducto(Integer id, ProductoDto dto) throws IOException {

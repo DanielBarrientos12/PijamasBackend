@@ -16,8 +16,8 @@ public class AgregarInventario {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "producto_id", nullable = false)
-    private Producto producto;
+    @JoinColumn(name = "producto_talla_id", nullable = false)
+    private ProductoTalla productoTalla;
 
     @Column(name = "cantidad_agregada", nullable = false)
     private Integer cantidadAgregada;

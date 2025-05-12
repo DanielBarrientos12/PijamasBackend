@@ -19,9 +19,6 @@ public class AdministrativoService {
     private AdministrativoRepository adminRepo;
 
     @Autowired
-    private RolRepository rolRepo;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public List<Administrativo> getAllAdministrativos() {
@@ -35,4 +32,21 @@ public class AdministrativoService {
         administrativo.setLastUpdate(LocalDateTime.now());
         return adminRepo.save(administrativo);
     }
+
+    public Administrativo findById(int id) {
+        return adminRepo.findById(id).orElse(null);
+    }
+
+    public Administrativo findByEmail(String email) {
+        return adminRepo.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("No existe administrativo con email: " + email));
+    }
+
+    public Administrativo updateAdministrativo(int id, Administrativo administrativo) {
+        Administrativo admin = findById(id);
+        admin.setNombre(administrativo.getNombre());
+        admin.setApellido(administrativo.getApellido());
+        return admin;
+    }
+
 }
