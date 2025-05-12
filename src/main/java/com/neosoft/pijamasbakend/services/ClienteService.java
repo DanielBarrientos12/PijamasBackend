@@ -20,6 +20,7 @@ public class ClienteService {
     public Cliente createCliente(Cliente cliente) {
         String passwordEncoded = passwordEncoder.encode(cliente.getHashedPassword());
         cliente.setHashedPassword(passwordEncoded);
+        cliente.setRol("CLIENTE");
         return clienteRepository.save(cliente);
     }
 

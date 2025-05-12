@@ -41,7 +41,7 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // -- abrimos registro de clientes y la lectura pública de productos
                         .requestMatchers(HttpMethod.POST, "/api/clientes/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos(").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/").permitAll()
 
                         // -- solo ADMINISTRADOR puede gestionar administrativos y roles
