@@ -15,7 +15,7 @@ public class ProductoDto {
     private String genero;
     private Boolean activo;
     List<MultipartFile> imagenes;
-
+    List<Integer> imagenesEliminadas;
     private Integer tallaId;
     private BigDecimal precioCompra;
     private BigDecimal precioVenta;

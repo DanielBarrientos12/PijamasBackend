@@ -4,13 +4,16 @@ import com.neosoft.pijamasbakend.entities.Producto;
 import com.neosoft.pijamasbakend.models.ProductoDto;
 import com.neosoft.pijamasbakend.models.ProductoResponseDto;
 import com.neosoft.pijamasbakend.services.ProductoService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/productos")
@@ -20,26 +23,75 @@ public class ProductoController {
     private ProductoService productoService;
 
     @PostMapping
-    public ResponseEntity<Producto> createProducto(@ModelAttribute ProductoDto dto) throws IOException {
-        Producto creado = productoService.createProducto(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+    public ResponseEntity<?> createProducto(@ModelAttribute ProductoDto dto) {
+        try {
+            Producto creado = productoService.createProducto(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(creado);
+        } catch (IllegalArgumentException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+        } catch (IOException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error al procesar imágenes: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        } catch (Exception e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error inesperado: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> updateProducto(@PathVariable Integer id, @ModelAttribute ProductoDto dto) throws IOException {
-        Producto actualizado = productoService.updateProducto(id, dto);
-        return ResponseEntity.ok(actualizado);
+    public ResponseEntity<?> updateProducto(@PathVariable Integer id, @ModelAttribute ProductoDto dto) {
+        try {
+            Producto actualizado = productoService.updateProducto(id, dto);
+            return ResponseEntity.ok(actualizado);
+        } catch (RuntimeException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+        } catch (IOException e) {
+            Map<String, String> error = new HashMap<>();
+            error.put("error", "Error al procesar imágenes: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+        }
     }
 
-    @GetMapping("/con-imagenes")
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductoById(@PathVariable Integer id) {
+        try {
+            ProductoResponseDto dto = productoService.findById(id);
+            return ResponseEntity.ok(dto);
+        } catch (EntityNotFoundException e) {
+            return notFound(e);
+        } catch (Exception e) {
+            return internalError("Error inesperado: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/")
     public ResponseEntity<List<ProductoResponseDto>> listarConImagenes() {
-        List<ProductoResponseDto> respuesta = productoService.getProductosConImagenesData();
+        List<ProductoResponseDto> respuesta = productoService.getAllProductos();
         return ResponseEntity.ok(respuesta);
     }
 
     @GetMapping("/activos")
-    public ResponseEntity<List<Producto>> getActiveProductos() {
-        List<Producto> activos = productoService.getAllActiveProductos();
+    public ResponseEntity<List<ProductoResponseDto>> listarActivos() {
+        List<ProductoResponseDto> activos = productoService.getAllActiveProductos();
         return ResponseEntity.ok(activos);
     }
+
+    private ResponseEntity<Map<String, String>> notFound(Exception e) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    private ResponseEntity<Map<String, String>> internalError(String message) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", message);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
 }

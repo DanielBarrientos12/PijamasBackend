@@ -10,6 +10,8 @@ import com.neosoft.pijamasbakend.repositories.TallaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductoTallaService {
 
@@ -54,14 +56,8 @@ public class ProductoTallaService {
         productoTallaRepo.save(variante);
     }
 
-    public ProductoTalla actualizarVariante(Integer id, ProductoTallaDto dto) {
-        ProductoTalla existente = productoTallaRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException(
-                        "Variante no encontrada con id: " + id));
-        existente.setPrecioCompra(dto.getPrecioCompra());
-        existente.setPrecioVenta(dto.getPrecioVenta());
-        return productoTallaRepo.save(existente);
+    public List<ProductoTalla> listarVariantesPorProducto(Integer productoId) {
+        return productoTallaRepo.findByProductoId(productoId);
     }
-
 
 }

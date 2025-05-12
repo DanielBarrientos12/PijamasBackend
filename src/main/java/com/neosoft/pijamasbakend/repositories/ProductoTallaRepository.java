@@ -10,5 +10,6 @@ public interface ProductoTallaRepository extends JpaRepository<ProductoTalla, In
 
     boolean existsByProductoIdAndTallaId(Integer productoId, Integer tallaId);
     Optional<ProductoTalla> findByProductoIdAndTallaId(Integer productoId, Integer tallaId);
+    List<ProductoTalla> findByProductoId(Integer productoId);
 
 }

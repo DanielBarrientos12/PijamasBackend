@@ -1,5 +1,7 @@
 package com.neosoft.pijamasbakend.models;
 
+import com.neosoft.pijamasbakend.entities.ProductoTalla;
+import com.neosoft.pijamasbakend.entities.Subcategoria;
 import com.neosoft.pijamasbakend.utils.ImagenData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +21,8 @@ public class ProductoResponseDto {
     private String genero;
     private Boolean activo;
     private LocalDate fechaCreacion;
-    private Integer subcategoriaId;
+    private Subcategoria subcategoria;
     private List<ImagenData> imagenes;
+    private List<ProductoTalla> tallas;
 
 }

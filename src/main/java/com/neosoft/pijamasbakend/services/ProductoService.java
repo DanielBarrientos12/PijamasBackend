@@ -1,12 +1,14 @@
 package com.neosoft.pijamasbakend.services;
 
 import com.neosoft.pijamasbakend.entities.Producto;
+import com.neosoft.pijamasbakend.entities.ProductoTalla;
 import com.neosoft.pijamasbakend.entities.Subcategoria;
 import com.neosoft.pijamasbakend.models.AgregarInventarioDto;
 import com.neosoft.pijamasbakend.models.ProductoDto;
 import com.neosoft.pijamasbakend.models.ProductoResponseDto;
 import com.neosoft.pijamasbakend.repositories.ProductoRepository;
 import com.neosoft.pijamasbakend.utils.ImagenData;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,9 @@ public class ProductoService {
     private AgregarInventarioService agregarInventarioService;
 
     @Autowired
+    private ProductoTallaService productoTallaService;
+
+    @Autowired
     private FileService fileService;
 
     @Transactional
@@ -43,7 +48,7 @@ public class ProductoService {
         // 1. Crear Producto
         Subcategoria subcat = subcategoriaService.findById(dto.getSubcategoriaId());
         if (subcat == null) throw new RuntimeException("Subcategoría no encontrada.");
-        
+
         Producto producto = new Producto();
         producto.setNombre(dto.getNombre());
         producto.setSubcategoria(subcat);
@@ -70,6 +75,7 @@ public class ProductoService {
         return producto;
     }
 
+    // Metodo grande que se usa al crear el inventario del producto
     private static AgregarInventarioDto getAgregarInventarioDto(ProductoDto dto, Producto producto, String email) {
         AgregarInventarioDto invDto = new AgregarInventarioDto();
         invDto.setProductoId(producto.getId());
@@ -86,68 +92,97 @@ public class ProductoService {
         return invDto;
     }
 
+    @Transactional
     public Producto updateProducto(Integer id, ProductoDto dto) throws IOException {
+        // 1. Recuperar producto o lanzar excepción si no existe
         Producto producto = productoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con id: " + id + " no encontrado."));
-        Subcategoria subcat = subcategoriaService.findById(dto.getSubcategoriaId());
-        if (subcat == null) {
-            throw new RuntimeException("Subcategoría con id " + dto.getSubcategoriaId() + " no encontrada.");
+                .orElseThrow(() ->
+                        new EntityNotFoundException("Producto no encontrado con id: " + id)
+                );
+
+        // 2. Actualizar campos del producto (solo los no nulos)
+        if (dto.getNombre() != null) producto.setNombre(dto.getNombre());
+        if (dto.getDescripcion() != null) producto.setDescripcion(dto.getDescripcion());
+        if (dto.getGenero() != null) producto.setGenero(dto.getGenero());
+        if (dto.getActivo() != null) producto.setActivo(dto.getActivo());
+
+        producto = productoRepo.save(producto);
+
+        // 3. Reemplazar imágenes si llegan nuevas
+        if ((dto.getImagenes() != null && !dto.getImagenes().isEmpty())
+                || (dto.getImagenesEliminadas() != null && !dto.getImagenesEliminadas().isEmpty())) {
+            productoImagenService.reemplazarImagenes(
+                    producto,
+                    dto.getImagenes(),             // nuevas
+                    dto.getImagenesEliminadas()    // a borrar en base al id
+            );
         }
 
-        producto.setNombre(dto.getNombre());
-        producto.setSubcategoria(subcat);
-        producto.setDescripcion(dto.getDescripcion());
-        producto.setGenero(dto.getGenero());
-        producto.setActivo(dto.getActivo() != null ? dto.getActivo() : producto.getActivo());
+        // 4. Manejar actualización de precios en la variante (talla)
+        if (dto.getTallaId() != null && (dto.getPrecioCompra() != null || dto.getPrecioVenta() != null)) {
 
-        productoRepo.save(producto);
+            boolean existeVar = productoTallaService
+                    .existsByProductoIdAndTallaId(producto.getId(), dto.getTallaId());
 
-        productoImagenService.guardarImagenesParaProducto(producto, dto.getImagenes());
+            if (existeVar) {
+                // Variante existente entonces actualizamos los precios de ser necesario
+                ProductoTalla variante = productoTallaService.getByProductoIdAndTallaId(producto.getId(), dto.getTallaId());
+                if (dto.getPrecioCompra() != null) variante.setPrecioCompra(dto.getPrecioCompra());
+                if (dto.getPrecioVenta() != null) variante.setPrecioVenta(dto.getPrecioVenta());
+                productoTallaService.guardarVariante(variante);
+            }
+        }
 
         return producto;
     }
 
-    public List<ProductoResponseDto> getProductosConImagenesData() {
-        return productoRepo.findAllConImagenes().stream().map(prod -> {
-            ProductoResponseDto dto = new ProductoResponseDto();
-
-            dto.setId(prod.getId());
-            dto.setNombre(prod.getNombre());
-            dto.setDescripcion(prod.getDescripcion());
-            dto.setGenero(prod.getGenero());
-            dto.setActivo(prod.getActivo());
-            dto.setFechaCreacion(prod.getFechaCreacion());
-            dto.setSubcategoriaId(prod.getSubcategoria().getId());
-
-            List<ImagenData> imgs = prod.getImagenes()
-                    .stream()
-                    .map(img -> {
-                        byte[] data;
-                        try {
-                            data = fileService.loadFile(img.getUrl());
-                        } catch (IOException e) {
-                            throw new UncheckedIOException("Error leyendo imagen " + img.getUrl(), e);
-                        }
-                        String nombreArchivo = Paths
-                                .get(img.getUrl())
-                                .getFileName()
-                                .toString();
-                        return new ImagenData(img.getPosicion(), nombreArchivo, data);
-                    })
-                    .collect(Collectors.toList());
-
-            dto.setImagenes(imgs);
-
-            return dto;
-        }).collect(Collectors.toList());
+    public ProductoResponseDto findById(Integer id) {
+        Producto prod = productoRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado"));
+        return mapToDto(prod);
     }
 
-    public List<Producto> getAllActiveProductos() {
-        return productoRepo.findByActivoTrue();
+    // Para administradores:
+    public List<ProductoResponseDto> getAllProductos() {
+        return productoRepo.findAll().stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 
-    public Producto findById(Integer id) {
-        return productoRepo.findById(id)
-                .orElseThrow(() -> new RuntimeException("Producto con id: " + id + " no encontrado."));
+    // Para clientes:
+    public List<ProductoResponseDto> getAllActiveProductos() {
+        return productoRepo.findByActivoTrue().stream().map(this::mapToDto).collect(Collectors.toList());
     }
+
+    private ProductoResponseDto mapToDto(Producto prod) {
+        ProductoResponseDto dto = new ProductoResponseDto();
+        dto.setId(prod.getId());
+        dto.setNombre(prod.getNombre());
+        dto.setDescripcion(prod.getDescripcion());
+        dto.setGenero(prod.getGenero());
+        dto.setActivo(prod.getActivo());
+        dto.setFechaCreacion(prod.getFechaCreacion());
+        dto.setSubcategoria(prod.getSubcategoria());
+
+        List<ImagenData> imgs = prod.getImagenes().stream()
+                .map(img -> {
+                    byte[] data;
+                    try {
+                        data = fileService.loadFile(img.getUrl());
+                    } catch (IOException e) {
+                        throw new UncheckedIOException("Error leyendo imagen " + img.getUrl(), e);
+                    }
+                    String nombreArchivo = Paths.get(img.getUrl()).getFileName().toString();
+                    return new ImagenData(img.getPosicion(), nombreArchivo, data);
+                })
+                .collect(Collectors.toList());
+        dto.setImagenes(imgs);
+
+        // Tallas: traemos directamente la lista de entidades
+        List<ProductoTalla> variantes = productoTallaService.listarVariantesPorProducto(prod.getId());
+        dto.setTallas(variantes);
+
+        return dto;
+    }
+
 }
