@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -55,6 +56,7 @@ public class ProductoService {
         producto.setDescripcion(dto.getDescripcion());
         producto.setGenero(dto.getGenero());
         producto.setActivo(dto.getActivo() != null ? dto.getActivo() : Boolean.TRUE);
+        producto.setFechaCreacion(LocalDate.now());
         producto = productoRepo.save(producto);
 
         // 2. Guardar imágenes
