@@ -70,8 +70,8 @@ public class ProductoController {
         }
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<ProductoResponseDto>> listarConImagenes() {
+    @GetMapping("/todos")
+    public ResponseEntity<List<ProductoResponseDto>> listarTodosProductos() {
         List<ProductoResponseDto> respuesta = productoService.getAllProductos();
         return ResponseEntity.ok(respuesta);
     }

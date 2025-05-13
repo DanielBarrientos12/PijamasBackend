@@ -39,39 +39,37 @@ public class SpringSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 3) Regla de autorización por endpoint
                 .authorizeHttpRequests(auth -> auth
-                        // -- abrimos registro de clientes y la lectura pública de productos
+                        // Público
                         .requestMatchers(HttpMethod.POST, "/api/clientes/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/productos(").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/productos/").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/*").permitAll()
 
-                        // -- solo ADMINISTRADOR puede gestionar administrativos y roles
-                        .requestMatchers("/api/administrativos/*").hasRole("ADMINISTRADOR")
+                        // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de productos
+                        .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/api/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/*").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+
+                        // ADMINISTRADOR | PRODUCT_MANAGER en categorías, subcategorías y tallas
+                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers("/api/subcategorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers("/api/tallas/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+
+                        // Solo ADMINISTRADOR
+                        .requestMatchers("/api/administrativos/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/api/roles/**").hasRole("ADMINISTRADOR")
 
-                        // -- Clientes: Administrador o Gerente de venta pueden consultar
-                        .requestMatchers("/api/clientes/**")
-                        .hasAnyRole("ADMINISTRADOR","GERENTE_VENTA")
+                        // ADMINISTRADOR | GERENTE_VENTA en clientes
+                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
 
-                        // -- Categorías y subcategorías: sólo Administrador o Product Manager
-                        .requestMatchers("/api/categorias/**")
-                        .hasAnyRole("ADMINISTRADOR","PRODUCT_MANAGER")
-                        .requestMatchers("/api/subcategorias/**")
-                        .hasAnyRole("ADMINISTRADOR","PRODUCT_MANAGER")
+                        // Categorías y subcategorías: sólo Administrador o Product Manager
+                        .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes")
+                        .hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
-                        // -- Tallas: Administrador o Product Manager
-                        .requestMatchers("/api/tallas/**")
-                        .hasAnyRole("ADMINISTRADOR","PRODUCT_MANAGER")
-
-                        // -- Productos: lectura pública, pero creación/edición solo Product Manager o Administrador
-                        .requestMatchers(HttpMethod.POST, "/api/productos/**")
-                        .hasAnyRole("ADMINISTRADOR","PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.PUT,  "/api/productos/**")
-                        .hasAnyRole("ADMINISTRADOR","PRODUCT_MANAGER")
-
-                        // -- cualquier otro endpoint requiere autenticación
+                        // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated()
                 )
-                // 4) Nuestro filtro de login + filtro de validación
+                // Nuestro filtro de login + filtro de validación
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationManager()));
 
