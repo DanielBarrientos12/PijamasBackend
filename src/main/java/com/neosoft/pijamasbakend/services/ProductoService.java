@@ -182,7 +182,7 @@ public class ProductoService {
 
         // Tallas: traemos directamente la lista de entidades
         List<ProductoTalla> variantes = productoTallaService.listarVariantesPorProducto(prod.getId());
-        dto.setTallas(variantes);
+        dto.setVariante(variantes);
 
         return dto;
     }

@@ -23,6 +23,6 @@ public class ProductoResponseDto {
     private LocalDate fechaCreacion;
     private Subcategoria subcategoria;
     private List<ImagenData> imagenes;
-    private List<ProductoTalla> tallas;
+    private List<ProductoTalla> variante;
 
 }
