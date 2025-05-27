@@ -54,7 +54,6 @@ public class ProductoService {
         producto.setNombre(dto.getNombre());
         producto.setSubcategoria(subcat);
         producto.setDescripcion(dto.getDescripcion());
-        producto.setGenero(dto.getGenero());
         producto.setActivo(dto.getActivo() != null ? dto.getActivo() : Boolean.TRUE);
         producto.setFechaCreacion(LocalDate.now());
         producto = productoRepo.save(producto);
@@ -105,7 +104,6 @@ public class ProductoService {
         // 2. Actualizar campos del producto (solo los no nulos)
         if (dto.getNombre() != null) producto.setNombre(dto.getNombre());
         if (dto.getDescripcion() != null) producto.setDescripcion(dto.getDescripcion());
-        if (dto.getGenero() != null) producto.setGenero(dto.getGenero());
         if (dto.getActivo() != null) producto.setActivo(dto.getActivo());
 
         producto = productoRepo.save(producto);
@@ -161,7 +159,6 @@ public class ProductoService {
         dto.setId(prod.getId());
         dto.setNombre(prod.getNombre());
         dto.setDescripcion(prod.getDescripcion());
-        dto.setGenero(prod.getGenero());
         dto.setActivo(prod.getActivo());
         dto.setFechaCreacion(prod.getFechaCreacion());
         dto.setSubcategoria(prod.getSubcategoria());

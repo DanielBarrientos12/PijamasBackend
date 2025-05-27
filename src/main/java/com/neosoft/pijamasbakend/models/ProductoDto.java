@@ -12,7 +12,6 @@ public class ProductoDto {
     private String nombre;
     private Integer subcategoriaId;
     private String descripcion;
-    private String genero;
     private Boolean activo;
     List<MultipartFile> imagenes;
     List<Integer> imagenesEliminadas;

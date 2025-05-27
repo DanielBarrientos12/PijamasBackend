@@ -6,7 +6,6 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
-// ---------- Administrativo ----------
 @Data
 @Entity
 @Table(name = "administrativo")

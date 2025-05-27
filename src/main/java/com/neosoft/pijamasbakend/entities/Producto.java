@@ -23,8 +23,6 @@ public class Producto {
     @Column(name = "descripcion", columnDefinition = "text")
     private String descripcion;
 
-    private String genero;
-
     private Boolean activo;
 
     @Column(name = "fecha_creacion")
