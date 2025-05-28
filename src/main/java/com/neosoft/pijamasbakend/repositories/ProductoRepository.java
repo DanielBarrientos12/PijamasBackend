@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface ProductoRepository extends JpaRepository<Producto, Integer> {
 
+    List<Producto> findBySubcategoriaCategoriaIdAndActivoTrue(Integer categoriaId);
     List<Producto> findByActivoTrue();
 
     @Query("SELECT DISTINCT p FROM Producto p LEFT JOIN FETCH p.imagenes")

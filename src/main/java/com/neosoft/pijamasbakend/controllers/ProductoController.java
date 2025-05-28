@@ -82,6 +82,12 @@ public class ProductoController {
         return ResponseEntity.ok(activos);
     }
 
+    @GetMapping("/categoria/{id}")
+    public ResponseEntity<List<ProductoResponseDto>> listarPorCategoria(@PathVariable Integer id) {
+        List<ProductoResponseDto> productoResponseDtoList = productoService.getProductosPorCategoria(id);
+        return ResponseEntity.ok(productoResponseDtoList);
+    }
+
     private ResponseEntity<Map<String, String>> notFound(Exception e) {
         Map<String, String> error = new HashMap<>();
         error.put("error", e.getMessage());

@@ -18,6 +18,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
@@ -43,6 +45,9 @@ public class ProductoService {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private PromocionService promocionService;
 
     @Transactional
     public Producto createProducto(ProductoDto dto) throws IOException {
@@ -154,6 +159,16 @@ public class ProductoService {
         return productoRepo.findByActivoTrue().stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
+    // Para filtrar por categoria
+    public List<ProductoResponseDto> getProductosPorCategoria(Integer categoriaId) {
+        List<Producto> productos = productoRepo
+                .findBySubcategoriaCategoriaIdAndActivoTrue(categoriaId);
+
+        return productos.stream()
+                .map(this::mapToDto)
+                .toList();
+    }
+
     private ProductoResponseDto mapToDto(Producto prod) {
         ProductoResponseDto dto = new ProductoResponseDto();
         dto.setId(prod.getId());
@@ -179,8 +194,23 @@ public class ProductoService {
 
         // Tallas: traemos directamente la lista de entidades
         List<ProductoTalla> variantes = productoTallaService.listarVariantesPorProducto(prod.getId());
-        dto.setVariante(variantes);
 
+        // Se busca el mejor % de descuento vigente para el producto
+        BigDecimal pctDesc = promocionService.mejorDescuento(prod.getId());
+
+        // Se calcula los valores promoción en cada variante, 0 sin rebaja
+        for (ProductoTalla v : variantes) {
+            v.setPorcentajeDescuento(pctDesc);
+            BigDecimal precioFinal = v.getPrecioVenta();
+
+            if (pctDesc.compareTo(BigDecimal.ZERO) > 0) {
+                precioFinal = precioFinal.subtract(precioFinal.multiply(pctDesc)
+                                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+            }
+            v.setPrecioConDescuento(precioFinal);
+        }
+
+        dto.setVariante(variantes);
         return dto;
     }
 

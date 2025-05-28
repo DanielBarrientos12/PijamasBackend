@@ -48,12 +48,20 @@ public class SpringSecurityConfig {
                         // Público
                         .requestMatchers(HttpMethod.POST, "/api/clientes/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/productos/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/categoria/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
 
                         // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de productos
                         .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.PUT, "/api/productos/*").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+
+                        // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de promociones en productos
+                        .requestMatchers(HttpMethod.POST, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.POST, "/api/promociones/*/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PUT,  "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE,"/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.GET,  "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
                         // ADMINISTRADOR | PRODUCT_MANAGER en categorías, subcategorías y tallas
                         .requestMatchers("/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
@@ -86,7 +94,7 @@ public class SpringSecurityConfig {
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*"));
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);
 

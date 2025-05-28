@@ -31,4 +31,11 @@ public class ProductoTalla {
     @Column(name = "stock_actual")
     private Integer stockActual;
 
+    // Transient indica que un atributo de una entidad no debe ser persistido en la base de datos
+    @Transient
+    private BigDecimal precioConDescuento;
+
+    @Transient
+    private BigDecimal porcentajeDescuento;
+
 }

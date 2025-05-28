@@ -18,7 +18,6 @@ public class ProductoResponseDto {
     private Integer id;
     private String nombre;
     private String descripcion;
-    private String genero;
     private Boolean activo;
     private LocalDate fechaCreacion;
     private Subcategoria subcategoria;
