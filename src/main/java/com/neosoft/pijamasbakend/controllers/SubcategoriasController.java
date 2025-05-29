@@ -2,7 +2,6 @@ package com.neosoft.pijamasbakend.controllers;
 
 import com.neosoft.pijamasbakend.models.SubcategoriaDto;
 import com.neosoft.pijamasbakend.entities.Subcategoria;
-import com.neosoft.pijamasbakend.services.CategoriaService;
 import com.neosoft.pijamasbakend.services.SubcategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +16,6 @@ public class SubcategoriasController {
     @Autowired
     private SubcategoriaService subcategoriaService;
 
-    @Autowired
-    private CategoriaService categoriaService;
-
     @GetMapping
     public ResponseEntity<List<Subcategoria>> getAllSubcategorias() {
         return ResponseEntity.ok(subcategoriaService.getAllSubcategorias());
@@ -28,6 +24,11 @@ public class SubcategoriasController {
     @GetMapping("/{id}")
     public ResponseEntity<Subcategoria> findById(@PathVariable int id) {
         return ResponseEntity.ok(subcategoriaService.findById(id));
+    }
+
+    @GetMapping( "/categoria/{id}")
+    public ResponseEntity<Iterable<Subcategoria>> getAllSubcategoriasByCategoria(@PathVariable int id) {
+        return ResponseEntity.ok(subcategoriaService.findByCategoriaId(id));
     }
 
     @PostMapping("{id}")

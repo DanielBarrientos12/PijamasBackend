@@ -32,6 +32,10 @@ public class SubcategoriaService {
         return subcategoriaRepository.findById(id).orElse(null);
     }
 
+    public List<Subcategoria> findByCategoriaId(int id) {
+        return subcategoriaRepository.findByCategoriaId(id);
+    }
+
     public List<Subcategoria> getAllSubcategorias() {
         return subcategoriaRepository.findAll();
     }
