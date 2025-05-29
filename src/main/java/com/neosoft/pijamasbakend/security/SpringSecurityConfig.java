@@ -46,10 +46,16 @@ public class SpringSecurityConfig {
                 // 3) Regla de autorización por endpoint
                 .authorizeHttpRequests(auth -> auth
                         // Público
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/clientes/register").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/categoria/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/password-reset/**").permitAll()
+
+                        // Swagger
+                        .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/docs/swagger-ui.html", "/docs/swagger-ui/**").permitAll()
 
                         // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de productos
                         .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
@@ -59,9 +65,9 @@ public class SpringSecurityConfig {
                         // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de promociones en productos
                         .requestMatchers(HttpMethod.POST, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/promociones/*/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.PUT,  "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.DELETE,"/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.GET,  "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
                         // ADMINISTRADOR | PRODUCT_MANAGER en categorías, subcategorías y tallas
                         .requestMatchers("/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
