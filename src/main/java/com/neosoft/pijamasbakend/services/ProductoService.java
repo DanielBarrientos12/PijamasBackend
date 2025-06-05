@@ -147,6 +147,12 @@ public class ProductoService {
         return mapToDto(prod);
     }
 
+    public List<ProductoResponseDto> findByNombre(String nombre) {
+        return productoRepo.findByNombreContainingIgnoreCase(nombre).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
     // Para administradores:
     public List<ProductoResponseDto> getAllProductos() {
         return productoRepo.findAll().stream()

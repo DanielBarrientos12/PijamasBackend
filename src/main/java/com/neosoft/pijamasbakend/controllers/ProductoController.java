@@ -70,6 +70,12 @@ public class ProductoController {
         }
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProductoResponseDto>> findByrNombre(@RequestParam("q") String product) {
+        List<ProductoResponseDto> resultados = productoService.findByNombre(product);
+        return ResponseEntity.ok(resultados);
+    }
+
     @GetMapping("/todos")
     public ResponseEntity<List<ProductoResponseDto>> listarTodosProductos() {
         List<ProductoResponseDto> respuesta = productoService.getAllProductos();
