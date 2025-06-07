@@ -51,11 +51,17 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/categoria/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/auth/password-reset/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/wompi-webhook").permitAll()
 
                         // Swagger
                         .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/docs/swagger-ui.html", "/docs/swagger-ui/**").permitAll()
+
+                        //  Facturas
+                        .requestMatchers(HttpMethod.POST, "/api/facturas").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
 
                         // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de productos
                         .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
