@@ -15,7 +15,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PromocionService {
@@ -79,6 +81,14 @@ public class PromocionService {
                 .max(BigDecimal::compareTo)
                 .orElse(BigDecimal.ZERO);
     }
+
+    // devuelve la pareja Promocion + %
+    // Si no hay promo vigente → Optional.empty()
+    public Optional<PromocionProducto> mejorPromocion(Integer productoId) {
+        return ppRepo.findAplicables(productoId, LocalDate.now()).stream()
+                .max(Comparator.comparing(PromocionProducto::getDescuento));
+    }
+
 
     public List<Promocion> todas() {
         return promoRepo.findAll();
