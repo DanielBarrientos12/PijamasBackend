@@ -95,15 +95,13 @@ public class SpringSecurityConfig {
                         .hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
                         // Wompi - tokenizar y fuentes sólo cliente autenticado
-                        .requestMatchers(HttpMethod.POST, "/api/wompi/tokens/**").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.GET,  "/api/wompi/tokens/**").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.POST, "/api/wompi/payment-sources").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.GET,  "/api/wompi/payment-sources/**").hasRole("CLIENTE")
+                        .requestMatchers("/api/wompi/tokens/**").permitAll()
+                        .requestMatchers("/api/wompi/payment-sources").permitAll()
 
                         //Facturas cliente - pendiente las de listar
                         .requestMatchers(HttpMethod.POST, "/api/facturas/checkout").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.GET,  "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE","ADMINISTRADOR","GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.GET,  "/api/facturas").hasAnyRole("ADMINISTRADOR","GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
 
                         // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated()

@@ -24,10 +24,14 @@ public class WompiClient {
     private final String integrityKey;
 
     public WompiClient(
-            @Value("${wompi.base-url}") String baseUrl,
-            @Value("${wompi.public-key}") String pubKey,
-            @Value("${wompi.private-key}") String prvKey,
-            @Value("${wompi.integrity-key}") String integrityKey
+            @Value("${wompi.base-url}")
+            String baseUrl,
+            @Value("${wompi.public-key}")
+            String pubKey,
+            @Value("${wompi.private-key}")
+            String prvKey,
+            @Value("${wompi.integrity-key}")
+            String integrityKey
     ) {
         this.pubCli = WebClient.builder()
                 .baseUrl(baseUrl)
