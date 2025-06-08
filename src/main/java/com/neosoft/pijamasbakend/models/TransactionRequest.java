@@ -1,8 +1,12 @@
 package com.neosoft.pijamasbakend.models;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.net.URI;
 import java.util.Map;
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record TransactionRequest(
         String acceptance_token,
         long amount_in_cents,
