@@ -33,7 +33,7 @@ public class FacturaController {
     private FacturaRepository facturaRepo;
     private final ObjectMapper mapper = new ObjectMapper();
 
-    @PostMapping
+    @PostMapping("/checkout")
     public ResponseEntity<CheckoutResponse> crearFactura(@Valid @RequestBody CheckoutRequest req) {
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
