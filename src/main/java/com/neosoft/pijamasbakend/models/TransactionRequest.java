@@ -1,7 +1,6 @@
 package com.neosoft.pijamasbakend.models;
 
 import java.net.URI;
-import java.time.Instant;
 import java.util.Map;
 
 public record TransactionRequest(
@@ -14,7 +13,7 @@ public record TransactionRequest(
         Long payment_source_id,
         URI redirect_url,
         String reference,
-        Instant expiration_time,
+        String expiration_time,
         Map<String, Object> customer_data,
         Map<String, Object> shipping_address
 ) {
