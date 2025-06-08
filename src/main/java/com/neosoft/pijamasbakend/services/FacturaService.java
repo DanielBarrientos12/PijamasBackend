@@ -62,6 +62,14 @@ public class FacturaService {
         }
     }
 
+    public List<Factura> obtenerFacturas(){
+        return facturaRepo.findAll();
+    }
+
+    public Factura obtenerFactura(Integer id){
+        return facturaRepo.findById(id).orElseThrow(()->new NoSuchElementException("Factura no encontrada"));
+    }
+
     @Transactional
     public void actualizarDesdeWebhook(String referencia, String status, String authCode) {
         log.info("Actualizando factura desde webhook. Ref: {}, Status: {}", referencia, status);

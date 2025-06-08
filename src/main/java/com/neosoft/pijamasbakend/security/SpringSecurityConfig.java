@@ -53,6 +53,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/facturas/wompi-webhook").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/webhook/wompi").permitAll()
 
                         // Swagger
                         .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
@@ -92,6 +93,17 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes")
                         .hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+
+                        // Wompi - tokenizar y fuentes sólo cliente autenticado
+                        .requestMatchers(HttpMethod.POST, "/api/wompi/tokens/**").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET,  "/api/wompi/tokens/**").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.POST, "/api/wompi/payment-sources").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET,  "/api/wompi/payment-sources/**").hasRole("CLIENTE")
+
+                        //Facturas cliente - pendiente las de listar
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/checkout").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.GET,  "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE","ADMINISTRADOR","GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET,  "/api/facturas").hasAnyRole("ADMINISTRADOR","GERENTE_VENTA")
 
                         // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated()

@@ -3,6 +3,7 @@ package com.neosoft.pijamasbakend.controllers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.neosoft.pijamasbakend.entities.Cliente;
+import com.neosoft.pijamasbakend.entities.Factura;
 import com.neosoft.pijamasbakend.models.CheckoutRequest;
 import com.neosoft.pijamasbakend.models.CheckoutResponse;
 import com.neosoft.pijamasbakend.services.ClienteService;
@@ -19,6 +20,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/facturas")
@@ -30,6 +33,16 @@ public class FacturaController {
     private final ObjectMapper mapper;
     @Value("${wompi.integrity-key}")
     private String integrityKey;
+
+    @GetMapping
+    public List<Factura> getAll() {
+        return facturaService.obtenerFacturas();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Factura> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(facturaService.obtenerFactura(id));
+    }
 
     @PostMapping("/checkout")
     public CheckoutResponse checkout(@Valid @RequestBody CheckoutRequest request) {
