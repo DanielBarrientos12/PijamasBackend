@@ -28,6 +28,10 @@ public class ClienteService {
         return clienteRepository.findById(id).orElse(null);
     }
 
+    public Cliente findByEmail(String email) {
+        return clienteRepository.findByEmail(email).orElse(null);
+    }
+
     public List<Cliente> getAllClientes() {
         return clienteRepository.findAll();
     }
