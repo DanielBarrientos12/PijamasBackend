@@ -89,11 +89,7 @@ public class ProductoService {
         invDto.setPrecioCompra(dto.getPrecioCompra());
         invDto.setPrecioVenta(dto.getPrecioVenta());
         invDto.setCantidadAgregada(dto.getAgregarStock() != null ? dto.getAgregarStock() : 0);
-        invDto.setObservaciones(
-                dto.getObservaciones() != null
-                        ? dto.getObservaciones()
-                        : "Stock inicial al crear producto"
-        );
+        invDto.setObservaciones(dto.getObservaciones() != null ? dto.getObservaciones() : "Stock inicial al crear producto");
         invDto.setEmail(email);
         return invDto;
     }
@@ -211,7 +207,7 @@ public class ProductoService {
 
             if (pctDesc.compareTo(BigDecimal.ZERO) > 0) {
                 precioFinal = precioFinal.subtract(precioFinal.multiply(pctDesc)
-                                .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
+                        .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP));
             }
             v.setPrecioConDescuento(precioFinal);
         }

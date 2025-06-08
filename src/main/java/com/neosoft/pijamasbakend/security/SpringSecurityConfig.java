@@ -83,6 +83,7 @@ public class SpringSecurityConfig {
                         // Solo ADMINISTRADOR
                         .requestMatchers("/api/administrativos/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/api/roles/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers(HttpMethod.POST, "/api/inventario").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
                         // ADMINISTRADOR | GERENTE_VENTA en clientes
                         .requestMatchers("/api/clientes/**").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")

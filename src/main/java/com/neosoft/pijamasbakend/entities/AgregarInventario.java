@@ -30,6 +30,6 @@ public class AgregarInventario {
     private String observaciones;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "administrativo_id", nullable = false)
+    @JoinColumn(name = "administrativo_id")
     private Administrativo administrativo;
 }
