@@ -29,6 +29,7 @@ public class FacturaService {
     private final ProductoTallaService ptService;
     private final PromocionService promoService;
     private final WompiClient wompi;
+    private final PedidoService pedidoService;
 
     @Transactional
     public CheckoutResponse checkout(CheckoutRequest req, Cliente cliente) {
@@ -49,6 +50,8 @@ public class FacturaService {
             procesarPagoWompi(factura, req);
 
             log.info("Checkout completado exitosamente. Factura: {}", factura.getReferencia());
+
+            pedidoService.crearPedidoDesdeFactura(factura, req.items());
 
             return new CheckoutResponse(factura.getReferencia(),
                     factura.getWompiPaymentUrl(),
