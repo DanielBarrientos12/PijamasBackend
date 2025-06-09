@@ -127,9 +127,16 @@ public class WompiClient {
                         new WompiException(resp.statusCode(), body)));
     }
 
-    public String buildSignature(long amountInCents, String reference) {
-        String plain = amountInCents + "COP" + reference + integrityKey;
-        return DigestUtils.sha256Hex(plain);
+    // firma sin expiration_time - de momento no se usa
+    public String buildSignature(String reference, long amountInCents, String currency) {
+        String payload = reference + amountInCents + currency + integrityKey;
+        return DigestUtils.sha256Hex(payload);
+    }
+
+    // firma con expiration_time
+    public String buildSignature(String reference, long amountInCents, String currency, String expirationTime) {
+        String payload = reference + amountInCents + currency + expirationTime + integrityKey;
+        return DigestUtils.sha256Hex(payload);
     }
 
     public Map<String, Object> buildPaymentMethod(Map<String, Object> raw) {

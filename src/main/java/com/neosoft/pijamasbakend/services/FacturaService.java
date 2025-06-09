@@ -235,6 +235,7 @@ public class FacturaService {
         long centavos = convertirPesosACentavos(factura.getTotalNeto());
         Map<String, Object> metodoPago = wompi.buildPaymentMethod(req.metodoPagoDetail());
         Long sourceId = extraerSourceId(req);
+        String expirationTime = Instant.now().plusSeconds(900).toString();
 
         // Formato exigido para compretar Transaccion en wompi
         // 1) Creamos el shipping_address a partir del Cliente
@@ -255,13 +256,13 @@ public class FacturaService {
                 req.acceptanceToken(),
                 centavos,
                 "COP",
-                wompi.buildSignature(centavos, factura.getReferencia()),
+                wompi.buildSignature(factura.getReferencia(), centavos, "COP", expirationTime),
                 factura.getCliente().getEmail(),
                 metodoPago,
                 sourceId,
                 req.redirectUrl(),
                 factura.getReferencia(),
-                Instant.now().plusSeconds(900).toString(),
+                expirationTime,
                 customerData,
                 shippingAddress
         );
