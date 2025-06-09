@@ -45,76 +45,82 @@ public class SpringSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 // 3) Regla de autorización por endpoint
                 .authorizeHttpRequests(auth -> auth
-                        // Público
+                        // --- Public Endpoints ---
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/clientes/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/checkout").hasRole("CLIENTE")
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/wompi-webhook").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/facturas/webhook/wompi").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/categoria/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/password-reset/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/facturas/wompi-webhook").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/facturas/webhook/wompi").permitAll()
 
-                        // Swagger
+                        // Allow public access to category listings
+                        .requestMatchers(HttpMethod.GET, "/api/categorias").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/{id:[0-9]+}").permitAll()
+
+                        // --- Swagger / API Docs ---
                         .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/docs/swagger-ui.html", "/docs/swagger-ui/**").permitAll()
 
-                        //  Facturas
-                        .requestMatchers(HttpMethod.POST, "/api/facturas").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR")
+                        // --- Factura Endpoints ---
+                        .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
                         .requestMatchers(HttpMethod.GET, "/api/facturas").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas/cliente/{clienteId:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.POST, "/api/facturas").hasRole("CLIENTE")
 
-                        // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de productos
+                        // --- Pedido Endpoints ---
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/{id:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/cliente/{clienteId:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/{id:[0-9]+}/enviar")
+                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.PUT, "/api/pedidos/{id:[0-9]+}/entregar")
+                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+
+                        // --- Product Management ---
                         .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
-                        // Solo ADMINISTRADOR | PRODUCT_MANAGER para administración de promociones en productos
+                        // --- Promotion Management ---
+                        .requestMatchers(HttpMethod.GET, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.POST, "/api/promociones/*/productos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.PUT, "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers(HttpMethod.DELETE, "/api/promociones/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/promociones").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
-                        // ADMINISTRADOR | PRODUCT_MANAGER en categorías, subcategorías y tallas
-                        .requestMatchers("/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        // --- Category, Subcategory, Size Management (write operations) ---
+                        .requestMatchers(HttpMethod.POST, "/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.PUT, "/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/categorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers("/api/subcategorias/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
                         .requestMatchers("/api/tallas/**").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
-                        // Solo ADMINISTRADOR
-                        .requestMatchers("/api/administrativos/**").hasRole("ADMINISTRADOR")
-                        .requestMatchers("/api/roles/**").hasRole("ADMINISTRADOR")
+                        // --- Inventory ---
                         .requestMatchers(HttpMethod.POST, "/api/inventario").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
 
-                        // ADMINISTRADOR | GERENTE_VENTA en clientes
-                        .requestMatchers("/api/clientes/**").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        // --- Client Endpoints ---
+                        .requestMatchers(HttpMethod.GET, "/api/clientes/{id:[0-9]+}")
+                        .hasRole("CLIENTE")
+                        .requestMatchers("/api/clientes/**")
+                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
 
-                        // Categorías y subcategorías: sólo Administrador o Product Manager
-                        .requestMatchers(HttpMethod.GET, "/api/productos/todos").hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-                        .requestMatchers(HttpMethod.GET, "/api/productos/con-imagenes")
-                        .hasAnyRole("ADMINISTRADOR", "PRODUCT_MANAGER")
-
-                        // Wompi - tokenizar y fuentes sólo cliente autenticado
+                        // --- Wompi / Payment ---
                         .requestMatchers("/api/wompi/tokens/**").permitAll()
-                        .requestMatchers("/api/wompi/payment-sources").permitAll()
+                        .requestMatchers("/api/wompi/payment-sources/**").permitAll()
 
-                        //Facturas cliente - pendiente las de listar
-                        .requestMatchers(HttpMethod.POST, "/api/facturas/checkout").hasRole("CLIENTE")
-                        .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.GET, "/api/facturas").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
-                        // Pedidos
-                        .requestMatchers(HttpMethod.GET,  "/api/pedidos").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.GET,  "/api/pedidos/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.GET,  "/api/pedidos/cliente/{clienteId:[0-9]+}")
-                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.PUT,  "/api/pedidos/{id:[0-9]+}/enviar")
-                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.PUT,  "/api/pedidos/{id:[0-9]+}/entregar")
-                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
-                        .requestMatchers(HttpMethod.GET, "/api/facturas/cliente/{clienteId:[0-9]+}")
-                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        // --- Administrative Endpoints ---
+                        .requestMatchers("/api/administrativos/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers("/api/roles/**").hasRole("ADMINISTRADOR")
 
-                        // Cualquier otro endpoint requiere autenticación
+                        // --- Fallback: authentication required ---
                         .anyRequest().authenticated()
                 )
                 // Nuestro filtro de login + filtro de validación
