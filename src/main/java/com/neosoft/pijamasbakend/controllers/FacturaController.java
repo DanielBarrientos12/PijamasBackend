@@ -8,6 +8,7 @@ import com.neosoft.pijamasbakend.models.CheckoutRequest;
 import com.neosoft.pijamasbakend.models.CheckoutResponse;
 import com.neosoft.pijamasbakend.services.ClienteService;
 import com.neosoft.pijamasbakend.services.FacturaService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +36,32 @@ public class FacturaController {
     private String integrityKey;
 
     @GetMapping
-    public List<Factura> getAll() {
-        return facturaService.obtenerFacturas();
+    public ResponseEntity<List<Factura>> getAll() {
+        List<Factura> facturas = facturaService.obtenerFacturas();
+        if (facturas.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(facturas);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Factura> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(facturaService.obtenerFactura(id));
+        try {
+            Factura factura = facturaService.obtenerFactura(id);
+            return ResponseEntity.ok(factura);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("/cliente/{clienteId}")
+    public ResponseEntity<List<Factura>> listarPorCliente(@PathVariable Integer clienteId) {
+
+        List<Factura> facturas = facturaService.listarFacturasPorCliente(clienteId);
+        if (facturas.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(facturas);
     }
 
     @PostMapping("/checkout")

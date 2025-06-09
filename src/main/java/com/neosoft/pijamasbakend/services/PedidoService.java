@@ -25,7 +25,7 @@ public class PedidoService {
     private ProductoTallaRepository productoRepo;
 
     @Transactional
-    public Pedido crearPedidoDesdeFactura(Factura factura, List<CheckoutItemDTO> itemsDto) {
+    public void crearPedidoDesdeFactura(Factura factura, List<CheckoutItemDTO> itemsDto) {
         // 1) asignar responsable (el gerente id=2)
         Administrativo gerente = adminRepo.findById(2)
                 .orElseThrow(() -> new IllegalStateException("Gerente no encontrado"));
@@ -48,11 +48,15 @@ public class PedidoService {
             pedido.getItems().add(pp);
         }
 
-        return pedidoRepo.save(pedido);
+        pedidoRepo.save(pedido);
     }
 
     public List<Pedido> listarPedidos(Optional<EstadoPedido> estado) {
         return estado.map(pedidoRepo::findByEstado).orElseGet(pedidoRepo::findAll);
+    }
+
+    public Pedido buscarPorIdPedido(Integer idPedido) {
+        return pedidoRepo.findById(idPedido).orElseThrow(() -> new EntityNotFoundException("Pedido no existe"));
     }
 
     @Transactional
@@ -62,5 +66,19 @@ public class PedidoService {
         p.setFechaEntrega(LocalDateTime.now());
         return pedidoRepo.save(p);
     }
+
+    @Transactional
+    public Pedido marcarEnviado(Integer pedidoId) {
+        Pedido p = pedidoRepo.findById(pedidoId).orElseThrow(() -> new EntityNotFoundException("Pedido no existe"));
+        p.setEstado(EstadoPedido.ENVIADO);
+        p.setFechaEntrega(LocalDateTime.now());
+        return pedidoRepo.save(p);
+    }
+
+
+    public List<Pedido> listarPedidosPorCliente(Integer clienteId) {
+        return pedidoRepo.findByFacturaClienteId(clienteId);
+    }
+
 }
 

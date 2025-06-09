@@ -102,6 +102,17 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/facturas/checkout").hasRole("CLIENTE")
                         .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
                         .requestMatchers(HttpMethod.GET, "/api/facturas").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        // Pedidos
+                        .requestMatchers(HttpMethod.GET,  "/api/pedidos").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET,  "/api/pedidos/{id:[0-9]+}").hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET,  "/api/pedidos/cliente/{clienteId:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.PUT,  "/api/pedidos/{id:[0-9]+}/enviar")
+                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.PUT,  "/api/pedidos/{id:[0-9]+}/entregar")
+                        .hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+                        .requestMatchers(HttpMethod.GET, "/api/facturas/cliente/{clienteId:[0-9]+}")
+                        .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
 
                         // Cualquier otro endpoint requiere autenticación
                         .anyRequest().authenticated()

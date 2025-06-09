@@ -5,6 +5,7 @@ import com.neosoft.pijamasbakend.enums.EstadoFactura;
 import com.neosoft.pijamasbakend.models.*;
 import com.neosoft.pijamasbakend.repositories.FacturaProductoRepository;
 import com.neosoft.pijamasbakend.repositories.FacturaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,11 @@ public class FacturaService {
     }
 
     public Factura obtenerFactura(Integer id) {
-        return facturaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Factura no encontrada"));
+        return facturaRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Factura no encontrada"));
+    }
+
+    public List<Factura> listarFacturasPorCliente(Integer clienteId) {
+        return facturaRepo.findByClienteId(clienteId);
     }
 
     @Transactional
