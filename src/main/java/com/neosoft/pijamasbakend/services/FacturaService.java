@@ -62,12 +62,12 @@ public class FacturaService {
         }
     }
 
-    public List<Factura> obtenerFacturas(){
+    public List<Factura> obtenerFacturas() {
         return facturaRepo.findAll();
     }
 
-    public Factura obtenerFactura(Integer id){
-        return facturaRepo.findById(id).orElseThrow(()->new NoSuchElementException("Factura no encontrada"));
+    public Factura obtenerFactura(Integer id) {
+        return facturaRepo.findById(id).orElseThrow(() -> new NoSuchElementException("Factura no encontrada"));
     }
 
     @Transactional
@@ -210,7 +210,6 @@ public class FacturaService {
 
     private void procesarPagoWompi(Factura factura, CheckoutRequest req) {
         try {
-            log.info("Creando transacción Wompi para factura: {}", factura.getReferencia());
 
             TransactionResponse response = crearTransaccionWompi(factura, req);
             actualizarFacturaConRespuestaWompi(factura, response);
@@ -237,6 +236,21 @@ public class FacturaService {
         Map<String, Object> metodoPago = wompi.buildPaymentMethod(req.metodoPagoDetail());
         Long sourceId = extraerSourceId(req);
 
+        // Formato exigido para compretar Transaccion en wompi
+        // 1) Creamos el shipping_address a partir del Cliente
+        Map<String, Object> shippingAddress = new HashMap<>();
+        shippingAddress.put("address_line_1", factura.getCliente().getDireccion() + " " + factura.getCliente().getBarrio());
+        shippingAddress.put("city", factura.getCliente().getCiudad());
+        shippingAddress.put("region", factura.getCliente().getDepartamento());
+        shippingAddress.put("country", "CO");
+        shippingAddress.put("phone_number", factura.getCliente().getTelefono());
+
+        // 2) Creamos el customer_data
+        Map<String, Object> customerData = new HashMap<>();
+        customerData.put("full_name", factura.getCliente().getNombre() + " " + factura.getCliente().getApellido());
+        customerData.put("email", factura.getCliente().getEmail());
+
+        // 3) Construimos y devolvemos el TransactionRequest completo
         return new TransactionRequest(
                 req.acceptanceToken(),
                 centavos,
@@ -247,9 +261,9 @@ public class FacturaService {
                 sourceId,
                 req.redirectUrl(),
                 factura.getReferencia(),
-                Instant.now().plusSeconds(900),
-                Map.of(),
-                Map.of()
+                Instant.now().plusSeconds(900).toString(),
+                customerData,
+                shippingAddress
         );
     }
 
@@ -269,7 +283,7 @@ public class FacturaService {
     }
 
     private Long extraerSourceId(CheckoutRequest req) {
-        Number n = (Number) req.metodoPagoDetail().get("payment_source_id");
+        Number n = (Number) req.metodoPagoDetail().get("paymentSourceId");
         return n != null ? n.longValue() : null;
     }
 
