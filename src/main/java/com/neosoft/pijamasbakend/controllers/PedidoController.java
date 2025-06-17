@@ -1,7 +1,7 @@
 package com.neosoft.pijamasbakend.controllers;
 
 import com.neosoft.pijamasbakend.enums.EstadoPedido;
-import com.neosoft.pijamasbakend.entities.Pedido;
+import com.neosoft.pijamasbakend.models.PedidoDTO;
 import com.neosoft.pijamasbakend.services.PedidoService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,9 @@ public class PedidoController {
     private PedidoService pedidoService;
 
     @GetMapping
-    public ResponseEntity<List<Pedido>> listarPedidos(@RequestParam Optional<EstadoPedido> estado) {
-        List<Pedido> lista = pedidoService.listarPedidos(estado);
+    public ResponseEntity<List<PedidoDTO>> listarPedidos(
+            @RequestParam Optional<EstadoPedido> estado) {
+        List<PedidoDTO> lista = pedidoService.listarPedidos(estado);
         if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
@@ -29,38 +30,39 @@ public class PedidoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Pedido> buscarPorId(@PathVariable("id") Integer id) {
+    public ResponseEntity<PedidoDTO> buscarPorId(@PathVariable("id") Integer id) {
         try {
-            Pedido p = pedidoService.buscarPorIdPedido(id);
-            return ResponseEntity.ok(p);
+            PedidoDTO dto = pedidoService.buscarPorIdPedido(id);
+            return ResponseEntity.ok(dto);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PutMapping("/{id}/entregar")
-    public ResponseEntity<Pedido> marcarEntregado(@PathVariable("id") Integer id) {
+    public ResponseEntity<PedidoDTO> marcarEntregado(@PathVariable("id") Integer id) {
         try {
-            Pedido p = pedidoService.marcarEntregado(id);
-            return ResponseEntity.ok(p);
+            PedidoDTO dto = pedidoService.marcarEntregado(id);
+            return ResponseEntity.ok(dto);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PutMapping("/{id}/enviar")
-    public ResponseEntity<Pedido> marcarEnviado(@PathVariable("id") Integer id) {
+    public ResponseEntity<PedidoDTO> marcarEnviado(@PathVariable("id") Integer id) {
         try {
-            Pedido p = pedidoService.marcarEnviado(id);
-            return ResponseEntity.ok(p);
+            PedidoDTO dto = pedidoService.marcarEnviado(id);
+            return ResponseEntity.ok(dto);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping("/cliente/{clienteId}")
-    public ResponseEntity<List<Pedido>> listarPorCliente(@PathVariable("clienteId") Integer clienteId) {
-        List<Pedido> lista = pedidoService.listarPedidosPorCliente(clienteId);
+    public ResponseEntity<List<PedidoDTO>> listarPorCliente(
+            @PathVariable("clienteId") Integer clienteId) {
+        List<PedidoDTO> lista = pedidoService.listarPedidosPorCliente(clienteId);
         if (lista.isEmpty()) {
             return ResponseEntity.noContent().build();
         }

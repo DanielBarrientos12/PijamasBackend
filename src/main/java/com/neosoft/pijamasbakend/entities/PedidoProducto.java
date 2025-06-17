@@ -12,7 +12,7 @@ public class PedidoProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
@@ -20,7 +20,7 @@ public class PedidoProducto {
     @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "talla_id")
     private Talla productoTalla;
 

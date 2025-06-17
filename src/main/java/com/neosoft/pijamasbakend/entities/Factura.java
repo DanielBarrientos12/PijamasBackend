@@ -18,7 +18,7 @@ public class Factura {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
@@ -64,8 +64,6 @@ public class Factura {
     private EstadoFactura estado = EstadoFactura.CREADA;
 
     // ---- Relación con detalles ----
-    @OneToMany(mappedBy = "factura",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
+    @OneToMany(mappedBy = "factura", cascade = CascadeType.ALL)
     private List<FacturaProducto> detalles = new ArrayList<>();
 }
