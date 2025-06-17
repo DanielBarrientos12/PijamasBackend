@@ -103,7 +103,7 @@ public class PedidoService {
 
     private PedidoDTO toDTO(Pedido p) {
         Cliente c = p.getFactura().getCliente();
-        String direccion = c.getDireccion() + " " + c.getBarrio() + " " + c.getCiudad() + " " + c.getDepartamento() + ".";
+        String direccion = c.getDireccion() + " Barrio " + c.getBarrio() + ", " + c.getCiudad() + ", " + c.getDepartamento() + ".";
         ClienteDTO cliente = new ClienteDTO(
                 c.getId(),
                 c.getNombre(),
@@ -123,6 +123,7 @@ public class PedidoService {
         Factura f = p.getFactura();
         FacturaDTO fact = new FacturaDTO(
                 f.getId(),
+                cliente,
                 f.getReferencia(),
                 f.getMetodoPago(),
                 f.getTotalNeto(),

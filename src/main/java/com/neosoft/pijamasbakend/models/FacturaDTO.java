@@ -11,6 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 public class FacturaDTO {
     private Integer id;
+    private ClienteDTO cliente;
     private String referencia;
     private String metodoPago;
     private BigDecimal totalNeto;
