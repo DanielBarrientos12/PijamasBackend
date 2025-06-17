@@ -71,7 +71,7 @@ public class ProductoController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<List<ProductoResponseDto>> findByrNombre(@RequestParam("q") String product) {
+    public ResponseEntity<List<ProductoResponseDto>> findByNombre(@RequestParam("q") String product) {
         List<ProductoResponseDto> resultados = productoService.findByNombre(product);
         return ResponseEntity.ok(resultados);
     }

@@ -54,6 +54,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/facturas/webhook/wompi").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/activos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/categoria/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/categorias/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/subcategorias/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
 
                         // Allow public access to category listings
