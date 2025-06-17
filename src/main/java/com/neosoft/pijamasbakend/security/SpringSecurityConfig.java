@@ -64,6 +64,9 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api-docs/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/docs/swagger-ui.html", "/docs/swagger-ui/**").permitAll()
 
+                        // --- Reporte endpoint ---
+                        .requestMatchers(HttpMethod.GET, "/api/reportes/ventas-mes").hasAnyRole("ADMINISTRADOR", "GERENTE_VENTA")
+
                         // --- Factura Endpoints ---
                         .requestMatchers(HttpMethod.GET, "/api/facturas/{id:[0-9]+}")
                         .hasAnyRole("CLIENTE", "ADMINISTRADOR", "GERENTE_VENTA")
